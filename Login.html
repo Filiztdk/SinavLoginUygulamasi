@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+
+    <title></title>
+    <script src="Content/jquery-3.2.1.min.js"></script>
+    <script src="Content/jquery.cookie.js"></script>
+    <script src="Content/kullanicilar.js"></script>
+    <style>
+        #login-sayfasi{
+            width:700px;
+            height:auto;
+            margin:auto;
+
+        }
+        #kullaniciAdi,#sifre{
+            display:block;
+            text-align:center;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size:xx-large;
+            width:700px;
+            height:100px;
+            margin-top:200px;
+            margin-bottom:50px;
+        }
+        #sifre {
+           margin-top:100px;
+        }
+        #giris
+        {
+            display:block;
+            width:170px;
+            height:80px;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size:25px;                
+            border-radius:10px;
+            margin-left:258px;
+
+        }
+        #denemeSayaci {
+            display: inline-block;
+            width: 675px;
+            margin-top: 50px;
+            text-align: center;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size:20px;
+            color:red;
+                
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="login-sayfasi">
+        <input id="kullaniciAdi" type="text" value="" placeholder="Kullanıcı Adı" />
+       <input id="sifre" type="password" value="" placeholder="Şifre"/>
+        <button id="giris">Giriş</button>
+        <a id="denemeSayaci"></a>
+
+
+    </div>
+
+
+    <script>
+
+
+
+        $.cookie('girisSayaci', '0')
+
+        $('#giris').bind('click', function () {
+            if (!$.cookie("login") & !$.cookie('loginBlocker')) {
+                $.ajax({
+                    url: 'Content/kullanicilar.js',
+                    method: 'get',
+                    success: function (data) {
+                        var kullanicilar = JSON.parse(data);
+                        var girisSayaci = parseInt($.cookie('girisSayaci'))
+                        var kullaniciAdi = document.getElementById('kullaniciAdi').value
+                        var sifre = document.getElementById('sifre').value
+
+                        for (var i = 0; i < kullanicilar.length; i++) {
+
+                            if (kullaniciAdi == kullanicilar[i].kullanici_adi & sifre == kullanicilar[i].sifre) {
+                                window.location.href = 'AnaSayfa.html'
+                                $.cookie('login', kullaniciAdi, { expires: 1 })
+                                break;
+                            }
+                            else {
+                                if (girisSayaci != 5 & !$.cookie('loginBlocker')) {
+                                    $.cookie('girisSayaci', (girisSayaci++))
+                                    document.getElementById('denemeSayaci').innerHTML = 5 - $.cookie('girisSayaci') + ' ' + 'Deneme Hakkınız Kaldı'
+                                }
+                                else if (girisSayaci == 5 & !$.cookie('loginBlocker')) {
+                                    document.getElementById('denemeSayaci').innerHTML = '5 kez hatalı giriş yaptınız 5 dakika sonra tekrar deneyiniz.'
+
+                                    var date = new Date();
+                                    date.setTime(date.getTime() + (5 * 60 * 1000));
+                                    $.cookie('loginBlocker', 'asd', { expires: date })
+                                }
+                            }
+
+                        }
+                    }
+                })
+            }
+        })
+        $('#giris').bind('click', function () {
+            if ($.cookie('loginBlocker')) {
+                document.getElementById('denemeSayaci').innerHTML = 'Lütfen Daha Sonra Tekrar Deneyin'
+            }
+        })
+
+        if ($.cookie('login')) {
+            window.location.href = 'AnaSayfa.html'
+        }
+
+
+
+    </script>
+
+</body>
+</html>

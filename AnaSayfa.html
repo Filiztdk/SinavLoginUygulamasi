@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Content/jquery-3.2.1.min.js"></script>
+    <script src="Content/jquery.cookie.js"></script>
+    <script src="Content/kullanicilar.js"></script>
+    <style>
+        #content {
+            margin: auto;
+            border: solid 2px;
+            width: 700px;
+            height: auto;
+        }
+
+        #baslik {
+            text-align: center;
+            font-size: 70px;
+            border-bottom: 2px solid;
+        }
+
+        #icerik {
+            position: relative;
+            height: 200px;
+        }
+
+        #profilResmi {
+            float: left;
+            
+        }
+        img
+        {
+           width:100px;
+           height:100px;
+        }
+
+        #icerik > h3 {
+            margin-left: 300px;
+        }
+
+
+
+
+        #ozgecmis {
+            border-top: 2px solid;
+            height: auto;
+        }
+
+       
+
+        #konular {
+            border-top: 2px solid;
+        }
+        #cikis-yap
+        {
+            width:100px;
+            height:40px;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div id="content">
+        <button id="cikis-yap">Çıkış Yap</button>
+        <div id="baslik">baslik</div>
+
+        <div id="icerik">
+
+            <div id="profilResmi"><img src="" /> </div>
+
+
+            <h3 id="dogumtarihi"></h3>
+            <h3 id="okul"></h3>
+            <h3 id="fakulte"></h3>
+        </div>
+        <button id="ozGecmis-buton">Öz geçmişi Göster</button>
+        <div id="ozgecmis">
+            
+           
+        </div>
+
+        <div id="konular">Footer</div>
+
+
+    </div>
+    <script>
+        var butondurum = true
+
+        $('#ozGecmis-buton').bind('click', function () {
+
+            if (butondurum == true) {
+                $('#ozgecmis').css('display', 'none')
+                butondurum = false;
+            }
+            else if (butondurum == false) {
+                $('#ozgecmis').css('display', 'block')
+                butondurum = true;
+            }
+        })
+
+        $.ajax({
+            url: 'Content/kullanicilar.js',
+            method: 'get',
+            success: function (data) {
+                var kullanicilar = JSON.parse(data)
+                var kullaniciAdi = $.cookie('login')
+
+                for (var i = 0; i < kullanicilar.length; i++) {
+                    if (kullaniciAdi == kullanicilar[i].kullanici_adi) {
+
+                        $('#baslik').text(kullanicilar[i].isim +" "+ kullanicilar[i].soyisim)
+                        $('img').attr("src", kullanicilar[i].profil_resmi)
+                        $('#dogumtarihi').text('Doğum Tarihi : '+kullanicilar[i].d_tarihi)
+                        $('#okul').text('Üniversite : '+kullanicilar[i].mezun_oldugu_okul)
+                        $('#fakulte').text('Fakulte : '+kullanicilar[i].fakulte)
+                        $('#ozgecmis').text('Özgeçmiş  :'+kullanicilar[i].ozgecmis)
+                        $('#konular').text('Konular  :'+kullanicilar[i].konular)
+                    }
+                }
+            }
+        })
+        $('#cikis-yap').bind('click', function(){
+
+            var cookies = $.cookie();
+            for (var cookie in cookies) {
+                $.removeCookie(cookie);
+            }
+            window.location.href='Login.html'
+
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
